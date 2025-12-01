@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <title>Sign up</title>
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+
+<div style="max-width:600px;margin:40px auto;padding:20px;border:1px solid #ddd;">
+    <h2>Sign up</h2>
+
+    <div th:if="${signupError}" style="color:red;">
+        <span th:text="${signupError}"></span>
+    </div>
+
+    <form th:action="@{/auth/signup}" th:object="${signupForm}" method="post">
+        <div style="margin-bottom:10px;">
+            <label for="name">Name</label>
+            <input type="text" th:field="*{name}" id="name" required style="width:100%;padding:8px;" />
+        </div>
+
+        <div style="margin-bottom:10px;">
+            <label for="email">Email</label>
+            <input type="email" th:field="*{email}" id="email" required style="width:100%;padding:8px;" />
+        </div>
+
+        <div style="margin-bottom:10px;">
+            <label>Role</label><br/>
+            <label><input type="radio" th:field="*{role}" value="STUDENT"/> Student</label>
+            <label style="margin-left:15px;"><input type="radio" th:field="*{role}" value="PROFESSOR"/> Professor</label>
+            <label style="margin-left:15px;"><input type="radio" th:field="*{role}" value="COORDINATOR"/> Coordinator</label>
+        </div>
+
+        <div id="student-fields">
+            <div style="margin-bottom:10px;">
+                <label for="studentId">Student ID</label>
+                <input type="text" th:field="*{studentId}" id="studentId" style="width:100%;padding:8px;" />
+            </div>
+
+            <div style="margin-bottom:10px;">
+                <label for="program">Program</label>
+                <select th:field="*{program}" id="program" style="width:100%;padding:8px;">
+                    <option th:each="p : ${programs}" th:value="${p}" th:text="${p}"></option>
+                </select>
+            </div>
+        </div>
+
+        <div style="text-align:right;">
+            <a th:href="@{/login}" style="margin-right:10px;">Have an account? Log in</a>
+            <button type="submit">Sign up</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const studentFields = document.getElementById('student-fields');
+        const radios = document.querySelectorAll('input[name="role"]');
+
+        function update() {
+            const checked = Array.from(radios).find(r => r.checked);
+            if (!checked) return;
+            studentFields.style.display = checked.value === 'STUDENT' ? '' : 'none';
+        }
+        radios.forEach(r => r.addEventListener('change', update));
+        update();
+    });
+</script>
+</body>
+</html>

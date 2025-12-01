@@ -6,6 +6,10 @@ import vv.pms.professor.internal.ProfessorRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -26,6 +30,14 @@ public class ProfessorService {
         }
         Professor newProfessor = new Professor(name, email);
         return repository.save(newProfessor);
+    }
+
+    /**
+     * Find a professor by email. Public API used by other modules (e.g., auth).
+     */
+    @Transactional(readOnly = true)
+    public Optional<Professor> findByEmail(String email) {
+        return repository.findByEmail(email);
     }
 
     /**
@@ -67,6 +79,13 @@ public class ProfessorService {
         professor.setName(name);
         professor.setEmail(email);
         repository.save(professor);
+    }
+
+    /** Finds all Professors for a given set of IDs and returns them in a Map for fast lookups */
+    @Transactional(readOnly = true)
+    public Map<Long, Professor> findByIds(Set<Long> ids) {
+        return repository.findAllById(ids).stream()
+                .collect(Collectors.toMap(Professor::getId, Function.identity()));
     }
 }
 

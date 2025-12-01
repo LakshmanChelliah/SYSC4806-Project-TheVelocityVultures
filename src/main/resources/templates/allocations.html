@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Project Allocations</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+
+<div class="container">
+    <h1>Project Allocations</h1>
+
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <form th:action="@{/allocations/best-effort}" method="post" style="margin-bottom: 1rem;">
+        <button type="submit" class="btn btn-secondary">Run Best-Effort Allocation</button>
+    </form>
+
+    <h2>Create / Change Allocation</h2>
+    <form th:action="@{/allocations/create}" method="post">
+        <label for="project">Project:</label>
+        <select id="project" name="projectId">
+            <option th:each="p : ${projects}"
+                    th:value="${p.id}"
+                    th:text="${p.title}"></option>
+        </select>
+
+        <label for="prof">Professor:</label>
+        <select id="prof" name="professorId">
+            <option th:each="prof : ${professors}"
+                    th:value="${prof.id}"
+                    th:text="${prof.name}"></option>
+        </select>
+
+        <button type="submit" class="btn btn-primary">Assign Professor</button>
+    </form>
+
+    <h2>Current Allocations</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Project</th>
+            <th>Professor</th>
+            <th>Students</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="alloc : ${allocations}">
+            <td th:text="${alloc.projectTitle}">Project title</td>
+            <td th:text="${alloc.professorName}">Professor name</td>
+            <td>
+                <span th:each="sId : ${alloc.assignedStudentIds}">
+                    <span th:each="s : ${students}"
+                          th:if="${s.id} == ${sId}"
+                          th:text="${s.name}">Student Name</span>
+                    <span th:if="${!#lists.isEmpty(alloc.assignedStudentIds) and sId != alloc.assignedStudentIds[alloc.assignedStudentIds.size()-1]}">, </span>
+                </span>
+            </td>
+            <td>
+                <form th:action="@{/allocations/remove}" method="post" style="display:inline">
+                    <input type="hidden" name="projectId" th:value="${alloc.projectId}" />
+                    <button type="submit" class="btn btn-danger">Remove Allocation</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h2>Assign Student</h2>
+    <form th:action="@{/allocations/assign-student}" method="post">
+        <label>Project:</label>
+        <select name="projectId">
+            <option th:each="p : ${projects}"
+                    th:value="${p.id}"
+                    th:text="${p.title}"></option>
+        </select>
+
+        <label>Student:</label>
+        <select name="studentId">
+            <option th:each="s : ${students}"
+                    th:value="${s.id}"
+                    th:text="${s.name}"></option>
+        </select>
+
+        <button type="submit" class="btn btn-primary">Assign Student</button>
+    </form>
+
+    <h2>Unassign Student</h2>
+    <form th:action="@{/allocations/unassign-student}" method="post">
+        <label>Project:</label>
+        <select name="projectId">
+            <option th:each="p : ${projects}"
+                    th:value="${p.id}"
+                    th:text="${p.title}"></option>
+        </select>
+
+        <label>Student:</label>
+        <select name="studentId">
+            <option th:each="s : ${students}"
+                    th:value="${s.id}"
+                    th:text="${s.name}"></option>
+        </select>
+
+        <button type="submit" class="btn btn-warning">Unassign Student</button>
+    </form>
+</div>
+</body>
+</html>

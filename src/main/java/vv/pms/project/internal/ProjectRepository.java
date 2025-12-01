@@ -1,11 +1,10 @@
 package vv.pms.project.internal;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 import vv.pms.project.Project;
-import java.util.List;
 
-// Placed in 'internal' to restrict direct access from other modules
-
+@Repository
 public interface ProjectRepository extends JpaRepository<Project, Long> {
-    List<Project> findByTitleContainingIgnoreCase(String title);
+    // JpaRepository provides findAll(), findById(), save(), deleteById()
 }

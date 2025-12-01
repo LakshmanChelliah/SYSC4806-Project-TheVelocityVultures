@@ -36,8 +36,6 @@ class ModularityTest {
 
         new Documenter(modules)
                 // Generates a PlantUML diagram of the overall module arrangement
-                .writeModulesAsPlantUml()
-                // Generates individual PlantUML diagrams for each module's internal structure
-                .writeIndividualModulesAsPlantUml();
+                .writeModulesAsPlantUml();
     }
 }

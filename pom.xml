@@ -12,7 +12,7 @@
     <artifactId>SYSC4806-G31-VELOCITY-VULTURES-PROJECT</artifactId>
     <version>MILESTONE-1</version>
     <packaging>jar</packaging>
-    
+
     <name>SYSC4806-Project-TheVelocityVultures</name>
     <description>SYSC4806-Project-TheVelocityVultures</description>
     <url/>
@@ -31,7 +31,10 @@
     <properties>
         <java.version>21</java.version>
         <spring-modulith.version>1.4.4</spring-modulith.version>
+        <plantuml.generator.version>3.0.1</plantuml.generator.version>
+        <plantuml.maven.version>2.0.0</plantuml.maven.version>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -98,6 +101,217 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M7</version>
+            </plugin>
+
+            <plugin>
+                <groupId>de.elnarion.maven</groupId>
+                <artifactId>plantuml-generator-maven-plugin</artifactId>
+                <version>${plantuml.generator.version}</version>
+                
+                <configuration>
+                    <outputDirectory>${project.build.directory}/plantuml-sources</outputDirectory>
+                    <blacklistRegexp>.*Application</blacklistRegexp> </configuration>
+
+                <executions>
+                    <execution>
+                        <id>allocation-diagram</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <outputFilename>allocation_class_diagram.puml</outputFilename>
+                            <scanPackages>
+                                <scanPackage>vv.pms.allocation</scanPackage>
+                            </scanPackages>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>auth-diagram</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <outputFilename>auth_class_diagram.puml</outputFilename>
+                            <scanPackages>
+                                <scanPackage>vv.pms.auth</scanPackage>
+                            </scanPackages>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>availability-diagram</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <outputFilename>availablility_class_diagram.puml</outputFilename>
+                            <scanPackages>
+                                <scanPackage>vv.pms.availability</scanPackage>
+                            </scanPackages>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>coordinator-diagram</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <outputFilename>coordinator_class_diagram.puml</outputFilename>
+                            <scanPackages>
+                                <scanPackage>vv.pms.coordinator</scanPackage>
+                            </scanPackages>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>presentation-diagram</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <outputFilename>presentation_class_diagram.puml</outputFilename>
+                            <scanPackages>
+                                <scanPackage>vv.pms.presentation</scanPackage>
+                            </scanPackages>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>professor-diagram</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <outputFilename>professor_class_diagram.puml</outputFilename>
+                            <scanPackages>
+                                <scanPackage>vv.pms.professor</scanPackage>
+                            </scanPackages>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>project-diagram</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <outputFilename>project_class_diagram.puml</outputFilename>
+                            <scanPackages>
+                                <scanPackage>vv.pms.project</scanPackage>
+                            </scanPackages>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>report-diagram</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <outputFilename>auth_class_diagram.puml</outputFilename>
+                            <scanPackages>
+                                <scanPackage>vv.pms.auth</scanPackage>
+                            </scanPackages>
+                        </configuration>
+                    </execution>
+                    
+                    <execution>
+                        <id>student-diagram</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <outputFilename>student_class_diagram.puml</outputFilename>
+                            <scanPackages>
+                                <scanPackage>vv.pms.student</scanPackage>
+                            </scanPackages>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>ui-diagram</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <outputFilename>ui_class_diagram.puml</outputFilename>
+                            <scanPackages>
+                                <scanPackage>vv.pms.ui</scanPackage>
+                            </scanPackages>
+                        </configuration>
+                    </execution>
+
+
+                </executions>
+            </plugin>
+
+
+            <plugin>
+                <groupId>com.github.jeluard</groupId>
+                <artifactId>plantuml-maven-plugin</artifactId>
+                <version>1.2</version> 
+                <configuration>
+                    <outputDirectory>${project.build.directory}/plantuml-images</outputDirectory>
+                    <format>png</format> 
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>net.sourceforge.plantuml</groupId>
+                        <artifactId>plantuml</artifactId>
+                        <version>1.2024.6</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <id>render-module-diagrams</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-classes</phase> 
+                        <configuration>
+                            <sourceFiles>
+                                <directory>${project.build.directory}/plantuml-sources</directory>
+                                <includes>
+                                    <include>**/*.puml</include>
+                                </includes>
+                            </sourceFiles>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>render-modulith-diagram</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>verify</phase> 
+                        <configuration>
+                            <sourceFiles>
+                                <directory>${project.build.directory}/spring-modulith-docs</directory>
+                                <includes>
+                                    <include>components.puml</include>
+                                </includes>
+                            </sourceFiles>
+                            </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
 

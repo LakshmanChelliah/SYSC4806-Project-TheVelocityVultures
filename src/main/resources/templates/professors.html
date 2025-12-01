@@ -3,114 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Professor Management - Simple</title>
-    <style>
-        body { font-family: sans-serif; margin: 20px; }
-        h1 { color: #333; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background-color: #f2f2f2; }
-        .form-container { border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; background-color: #fff; }
-        .error { color: red; font-size: 0.9em; }
-        .button { padding: 8px 12px; margin-right: 5px; cursor: pointer; }
-    </style>
+    <title>My Projects</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
+    <div th:replace="fragments/header :: header"></div>
 
-    <div style="max-width: 800px; margin: auto;">
+    <div class="container mt-4">
         <header>
-            <h1>Professor Directory</h1>
-            <p>Simple interface for managing professors (Thymeleaf SSR).</p>
+            <h1>My Projects</h1>
         </header>
 
-        <!-- Status and Error Messages -->
-        <div th:if="${submissionError}" class="error" style="margin-bottom: 15px;">
-            Error: <span th:text="${submissionError}"></span>
-        </div>
-        
-        <!-- Action Bar: Add New Professor Button -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-            <h2>Professor List</h2>
-            <a th:href="@{/professors(showForm=true)}" class="button" style="background-color: green; color: white; text-decoration: none;">
-                + Add New Professor
-            </a>
-        </div>
-        
-        <!-- Form for Create/Edit -->
-        <!-- Form is visible if 'showForm' param is present, if it's an edit view (id != null), or if there are validation errors -->
-        <div id="form-container" class="form-container"
-             th:if="${param.showForm != null or professorForm.id != null or #fields.hasErrors('professorForm.*')}">
-
-            <h3 th:text="${professorForm.id == null ? 'Add New Professor' : 'Edit Professor'}">Add New Professor</h3>
-
-            <!-- Th:object binds the form to the ProfessorForm object in the model -->
-            <form th:action="@{/professors}" th:object="${professorForm}" method="post">
-                <input type="hidden" th:field="*{id}" />
-                
-                <div style="margin-bottom: 10px;">
-                    <label for="name">Name:</label>
-                    <!-- th:field links this input to professorForm.name -->
-                    <input type="text" th:field="*{name}" required style="width: 100%; padding: 5px;">
-                    <!-- Th:errors displays validation messages for the 'name' field -->
-                    <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="error"></p>
-                </div>
-                
-                <div style="margin-bottom: 10px;">
-                    <label for="email">Email:</label>
-                    <!-- th:field links this input to professorForm.email -->
-                    <input type="email" th:field="*{email}" required style="width: 100%; padding: 5px;">
-                    <!-- Th:errors displays validation messages for the 'email' field -->
-                    <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="error"></p>
-                </div>
-
-                <div style="text-align: right; margin-top: 15px;">
-                    <a th:href="@{/professors}" class="button" style="background-color: #eee;">
-                        Cancel
-                    </a>
-                    <button type="submit" class="button" style="background-color: blue; color: white;">
-                        <span th:text="${professorForm.id == null ? 'Save Professor' : 'Update Professor'}">Save Professor</span>
-                    </button>
-                </div>
-            </form>
-        </div>
-
-        <!-- Professor Table -->
-        <div>
-            <table>
+        <div class="mt-4">
+            <table class="table table-striped table-hover">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th style="text-align: center;">Actions</th>
+                        <th>Project Title</th>
+                        <th>Status</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Th:each loops over the list of professors passed by the controller -->
-                    <tr th:each="professor : ${professors}">
-                        <td th:text="${professor.id}">1</td>
-                        <td th:text="${professor.name}">Dr. Name</td>
-                        <td th:text="${professor.email}">email@uni.edu</td>
-                        
-                        <td style="text-align: center;">
-                            <!-- Edit Action: Links to a GET endpoint to populate the form -->
-                            <a th:href="@{/professors/edit/{id}(id=${professor.id})}" style="color: blue;">Edit</a>
-                            
-                            <!-- Delete Action: Uses a hidden form submission -->
-                            <form th:action="@{/professors/delete}" method="post" style="display: inline; margin-left: 10px;">
-                                <input type="hidden" name="id" th:value="${professor.id}" />
-                                <button type="submit" onclick="return confirm('Are you sure you want to delete this professor?')"
-                                        style="color: red; background: none; border: none; padding: 0; cursor: pointer;">Delete</button>
-                            </form>
+                    <tr th:each="project : ${projects}">
+                        <td th:text="${project.title}">Project Title</td>
+                        <td th:text="${project.status}">OPEN</td>
+                        <td>
+                            <a th:href="@{/projects/details/{id}(id=${project.id})}" class="btn btn-primary btn-sm">View/Edit</a>
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
         
-        <!-- Empty State -->
-        <p th:if="${professors.isEmpty()}" style="text-align: center; color: #777; margin-top: 20px;">
-            No professors found.
+        <p th:if="${projects.isEmpty()}" class="text-center text-muted mt-4">
+            You are not assigned to any projects yet.
         </p>
     </div>
 

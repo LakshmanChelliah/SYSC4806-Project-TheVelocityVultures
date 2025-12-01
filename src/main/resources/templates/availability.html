@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Availability</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Custom styles for the availability grid */
+        .slot-available {
+            background-color: #d4edda !important; /* Greenish */
+        }
+        .slot-unavailable {
+            background-color: #f8d7da !important; /* Reddish */
+        }
+        select.form-select-sm {
+            width: auto;
+            margin: 0 auto;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+
+<div class="container mt-4">
+    <h1>Availability</h1>
+
+    <div th:if="${param.success}" class="alert alert-success">
+        Availability updated successfully!
+    </div>
+
+    <form th:action="@{/availability}" th:object="${availability}" method="post">
+
+        <div class="mb-3">
+            <button type="submit" class="btn btn-primary">Update Availability</button>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-bordered text-center align-middle">
+                <thead class="table-light">
+                <tr>
+                    <th>Time</th>
+                    <th th:each="day : ${days}" th:text="${day}">Day</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="timeLabel, i : ${timeSlots}">
+
+                    <td th:text="${timeLabel}" class="fw-bold"></td>
+
+                    <td th:each="day, j : ${days}"
+                        th:with="isAvailable=*{timeslots[__${j.index}__][__${i.index}__]}"
+                        th:classappend="${isAvailable} ? 'slot-available' : 'slot-unavailable'">
+
+                        <select class="form-select form-select-sm"
+                                th:name="|timeslots[${j.index}][${i.index}]|">
+
+                            <option value="false" th:selected="${!isAvailable}">&#10060;</option>
+                            <option value="true" th:selected="${isAvailable}">&#9989;</option>
+
+                        </select>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mb-5">
+            <button type="submit" class="btn btn-primary">Update Availability</button>
+        </div>
+    </form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

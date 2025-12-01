@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <title>My Profile</title>
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+
+<div style="max-width: 600px; margin: 40px auto; padding: 20px; border:1px solid #ddd;">
+
+    <div th:if="${hasTeam}" style="margin-bottom:20px;">
+        <h2>My Team</h2>
+        <table style="width:100%; border-collapse: collapse;">
+            <thead>
+            <tr>
+                <th style="text-align:left; border-bottom: 1px solid #ddd; padding:6px;">Role</th>
+                <th style="text-align:left; border-bottom: 1px solid #ddd; padding:6px;">Name</th>
+                <th style="text-align:left; border-bottom: 1px solid #ddd; padding:6px;">Email</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td style="padding:6px;">Professor</td>
+                <td style="padding:6px;" th:text="${teamProfessor.name}">Professor Name</td>
+                <td style="padding:6px;"><a th:href="${'mailto:' + teamProfessor.email}" th:text="${teamProfessor.email}">prof@example.com</a></td>
+            </tr>
+            <tr th:each="member : ${teamStudents}">
+                <td style="padding:6px;" th:text="${member.id == currentStudentId} ? 'Me' : 'Student'">Student</td>
+                <td style="padding:6px;" th:text="${member.name}">Student Name</td>
+                <td style="padding:6px;"><a th:href="${'mailto:' + member.email}" th:text="${member.email}">student@example.com</a></td>
+            </tr>
+            </tbody>
+        </table>
+        <div style="margin-top: 15px;">
+            <a th:href="@{/projects/details/{id}(id=${projectId})}" class="btn btn-primary btn-sm">See project details and report submission portal</a>
+        </div>
+    </div>
+
+    <h2>Update Profile</h2>
+
+    <div th:if="${!hasTeam}" style="margin-bottom:12px; color:#555;">
+        You are not currently assigned to a project
+    </div>
+
+    <div th:if="${success}" style="color: green; margin-bottom: 10px;">
+        <span th:text="${success}"></span>
+    </div>
+
+    <div th:if="${error}" style="color: red; margin-bottom: 10px;">
+        <span th:text="${error}"></span>
+    </div>
+
+    <form th:action="@{/student/profile}" th:object="${student}" method="post">
+
+        <div style="margin-bottom: 10px;">
+            <label>Name</label>
+            <input type="text" th:field="*{name}" required style="width: 100%; padding: 8px;">
+        </div>
+
+        <div style="margin-bottom: 10px;">
+            <label>Email</label>
+            <input type="email" th:field="*{email}" required style="width: 100%; padding: 8px;">
+        </div>
+
+        <div style="margin-bottom: 10px;">
+            <label>Student ID</label>
+            <input type="text" th:field="*{studentId}" required style="width: 100%; padding: 8px;">
+        </div>
+
+        <div style="margin-bottom: 10px;">
+            <label>Program</label>
+            <select th:field="*{program}" style="width: 100%; padding: 8px;">
+                <option th:each="p : ${programs}"
+                        th:value="${p}"
+                        th:text="${p}">
+                </option>
+            </select>
+        </div>
+
+        <div style="text-align: right; margin-top: 15px;">
+            <button type="submit" style="padding: 8px 16px;">Save Changes</button>
+        </div>
+    </form>
+
+</div>
+</body>
+</html>

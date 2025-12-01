@@ -22,7 +22,7 @@ public class ProfessorWebController {
 
     /**
      * GET /api/professors : Lists all professors.
-     * 
+     *
      * @return A list of ProfessorRecord DTOs.
      */
     @GetMapping
@@ -51,7 +51,7 @@ public class ProfessorWebController {
 
     /**
      * PUT /api/professors/{id} : Updates an existing professor.
-     * 
+     *
      * @param id The ID of the professor to update.
      * @param dto The ProfessorRecord DTO containing updated data.
      * @return The updated ProfessorRecord DTO.
@@ -69,7 +69,7 @@ public class ProfessorWebController {
             return ResponseEntity.badRequest().build();
         }
     }
-    
+
     /**
      * DELETE /api/professors/{id} : Deletes a professor.
      * @param id The ID of the professor to delete.

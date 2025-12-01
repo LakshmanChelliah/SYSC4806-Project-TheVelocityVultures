@@ -1,0 +1,47 @@
+<!-- Header fragment included on all pages -->
+<!DOCTYPE html>
+<div th:fragment="header" xmlns:th="http://www.w3.org/1999/xhtml">
+    <nav style="background:#f8f9fa;padding:10px;border-bottom:1px solid #ddd;">
+        <div style="max-width:1100px;margin:auto;display:flex;align-items:center;justify-content:space-between;">
+            <div>
+                <img th:src="@{/images/VelocityVulturesLogo.jpg}"
+                     alt="VV logo"
+                     style="width:48px;height:48px;object-fit:cover;margin-left:8px;border-radius:4px;vertical-align:middle;">
+
+                <a th:href="@{/home}"
+                   style="text-decoration:none;color:#333;font-weight:bold;margin-left:8px;display:inline-flex;align-items:center;">
+                    Vulturaciously PMS
+                </a>
+
+                <a th:href="@{/home}" style="margin-right:8px;margin-left:12px;">Home</a>
+                <a th:href="@{/projects}" style="margin-right:8px;">Projects</a>
+
+                <a th:href="@{/availability}"
+                   style="margin-right:8px;"
+                   th:if="${currentUserRole == 'STUDENT' or currentUserRole == 'PROFESSOR'}">Availability</a>
+
+
+                <a th:href="@{/presentations}"
+                   style="margin-right:8px;"
+                   th:if="${currentUserRole == 'COORDINATOR'}">
+                    Presentations
+                </a>
+
+
+            </div>
+
+            <div>
+                <span th:if="${currentUserName == null}">
+                    <a th:href="@{/login}">Log in</a>
+                    <a th:href="@{/signup}" style="margin-left:10px;">Sign up</a>
+                </span>
+
+                <span th:if="${currentUserName != null}">
+                    Signed in as <strong th:text="${currentUserName}"></strong>
+                    (<span th:text="${currentUserRole}"></span>)
+                    <a th:href="@{/auth/logout}" style="margin-left:10px;">Log out</a>
+                </span>
+            </div>
+        </div>
+    </nav>
+</div>

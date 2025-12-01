@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Presentations</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+
+<div class="container mt-4">
+
+  <h1>Presentations</h1>
+
+  <div th:if="${error}" class="alert alert-danger mt-2" th:text="${error}"></div>
+
+  <!-- =======================
+       Section 1: Rooms
+       ======================= -->
+  <section class="mt-4">
+    <h2>Rooms</h2>
+
+    <form th:action="@{/presentations/rooms/add}" method="post" class="row g-2 align-items-center mb-3">
+      <div class="col-auto">
+        <label for="roomName" class="col-form-label">Room name:</label>
+      </div>
+      <div class="col-auto">
+        <input id="roomName" name="name" type="text" class="form-control" required>
+      </div>
+      <div class="col-auto">
+        <button type="submit" class="btn btn-primary">Add Room</button>
+      </div>
+    </form>
+
+    <table class="table table-bordered table-sm align-middle">
+      <thead class="table-light">
+      <tr>
+        <th style="width:50%;">Room Name</th>
+        <th style="width:50%;">Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="room : ${rooms}">
+        <td>
+          <form th:action="@{/presentations/rooms/update}" method="post" class="d-flex gap-2">
+            <input type="hidden" name="id" th:value="${room.id}">
+            <input type="text" name="name" class="form-control" th:value="${room.name}" required>
+            <button type="submit" class="btn btn-sm btn-secondary">Update</button>
+          </form>
+        </td>
+        <td>
+          <form th:action="@{/presentations/rooms/delete}" method="post"
+                onsubmit="return confirm('Delete this room?');">
+            <input type="hidden" name="id" th:value="${room.id}">
+            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+          </form>
+        </td>
+      </tr>
+      <tr th:if="${#lists.isEmpty(rooms)}">
+        <td colspan="2" class="text-muted text-center">No rooms created yet.</td>
+      </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- =======================
+       Section 2: Room Assignment
+       ======================= -->
+  <section class="mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h2 class="mb-0">Room Assignment</h2>
+      <form th:action="@{/presentations/auto}" method="post">
+        <button type="submit" class="btn btn-outline-primary">
+          Assign Rooms Automatically
+        </button>
+      </form>
+    </div>
+
+    <table class="table table-bordered table-hover align-middle">
+      <thead class="table-light">
+      <tr>
+        <th>Project</th>
+        <th>Professor</th>
+        <th>Students</th>
+        <th style="width:180px;">Room</th>
+        <th style="width:260px;">Time</th>
+        <th style="width:180px;">Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="row : ${rows}">
+        <td th:text="${row.projectTitle}"></td>
+        <td th:text="${row.professorName}"></td>
+        <td th:text="${row.studentNames}"></td>
+
+        <td>
+          <form th:action="@{/presentations/assign}" method="post" class="row g-2 align-items-center">
+            <input type="hidden" name="projectId" th:value="${row.projectId}">
+
+            <div class="col-12">
+              <select name="roomId" class="form-select form-select-sm" required>
+                <option th:each="room : ${rooms}"
+                        th:value="${room.id}"
+                        th:text="${room.name}"
+                        th:selected="${row.roomId} != null ? ${room.id} == ${row.roomId} : false">
+                </option>
+              </select>
+            </div>
+
+            <div class="col-12 mt-1">
+              <select name="slotKey" class="form-select form-select-sm" required>
+                <option th:each="opt : ${slotOptionsByProject[row.projectId]}"
+                        th:value="|${opt.dayIndex()}-${opt.startBinIndex()}|"
+                        th:text="${opt.label}">
+                </option>
+                <option th:if="${#lists.isEmpty(slotOptionsByProject[row.projectId])}"
+                        disabled>
+                  No available slots
+                </option>
+              </select>
+            </div>
+
+            <div class="col-12 mt-1">
+              <button type="submit" class="btn btn-sm btn-primary">
+                <span th:text="${row.slotLabel != null} ? 'Update' : 'Assign'">Assign</span>
+              </button>
+            </div>
+          </form>
+        </td>
+
+        <td>
+          <span th:text="${row.slotLabel != null ? row.slotLabel : 'Not assigned'}"></span>
+        </td>
+
+        <td>
+          <form th:if="${row.slotLabel != null}"
+                th:action="@{/presentations/unassign}" method="post"
+                onsubmit="return confirm('Unassign this presentation slot?');">
+            <input type="hidden" name="projectId" th:value="${row.projectId}">
+            <button type="submit" class="btn btn-sm btn-outline-danger">Unassign</button>
+          </form>
+          <span th:if="${row.slotLabel == null}" class="text-muted">No slot</span>
+        </td>
+      </tr>
+
+      <tr th:if="${#lists.isEmpty(rows)}">
+        <td colspan="6" class="text-muted text-center">
+          No projects with allocations and students to schedule.
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </section>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

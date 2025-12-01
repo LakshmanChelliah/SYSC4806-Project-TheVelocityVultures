@@ -1,6 +1,8 @@
 package vv.pms.project;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+
 import java.util.Set;
 
 @Entity
@@ -15,6 +17,7 @@ public class Project {
     private String title;
 
     @Lob // Used for storing large amounts of text
+    @NotBlank(message = "Description is required")
     @Column(nullable = false)
     private String description;
 
@@ -40,9 +43,21 @@ public class Project {
         this.requiredStudents = requiredStudents;
     }
 
+    public Project(Long id, String title, String description, Set<Program> programs, int requiredStudents) {
+        this.id = id;
+        this.title = title;
+        this.description =description;
+        this.programRestrictions = programs;
+        this.requiredStudents = requiredStudents;
+    }
+
     // --- Getters and Setters ---
     public Long getId() {
         return id;
+    }
+
+    public void setId(long id) {
+        this.id = (Long) id;
     }
 
     public String getTitle() {
@@ -87,5 +102,9 @@ public class Project {
 
     public boolean isProgramAllowed(Program studentProgram) {
         return this.programRestrictions.contains(studentProgram);
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 }

@@ -1,8 +1,8 @@
 package vv.pms.allocation;
 
 import jakarta.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "project_allocations")
@@ -12,27 +12,26 @@ public class ProjectAllocation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Use Long to reference the Project entity from the 'project' module
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private Long projectId;
 
-    // Use Long to reference the Professor entity from the 'professor' module
     @Column(nullable = false)
     private Long professorId;
 
-    // For future milestones: Tracks assigned students using IDs
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "allocation_assigned_students", joinColumns = @JoinColumn(name = "allocation_id"))
-    private Set<Long> assignedStudentIds = new HashSet<>();
+    @ElementCollection
+    @CollectionTable(name = "allocation_students", joinColumns = @JoinColumn(name = "allocation_id"))
+    @Column(name = "student_id", nullable = false)
+    private List<Long> assignedStudentIds = new ArrayList<>();
 
-    // For future milestones: Tracks the current count for quick checks
-    @Column(nullable = false)
-    private int currentStudentCount = 0;
+    // --- UI helper fields (not persisted) ---
+    @Transient
+    private String projectTitle;
 
-    // --- Constructors ---
+    @Transient
+    private String professorName;
+
     public ProjectAllocation() {}
 
-    // Constructor for the initial Professor-Project mapping
     public ProjectAllocation(Long projectId, Long professorId) {
         this.projectId = projectId;
         this.professorId = professorId;
@@ -40,10 +39,13 @@ public class ProjectAllocation {
 
     // --- Business Logic focused on relationships (for future milestones) ---
     public void assignStudent(Long studentId) {
-        // Validation logic for fullness/duplicates goes in the AllocationService
         this.assignedStudentIds.add(studentId);
-        this.currentStudentCount = this.assignedStudentIds.size();
     }
+
+    public void unassignStudent(Long studentId) {
+        this.assignedStudentIds.remove(studentId);
+    }
+
 
     // --- Getters and Setters ---
     public Long getId() {
@@ -58,15 +60,39 @@ public class ProjectAllocation {
         return professorId;
     }
 
-    public void setProfessorId(Long professorId) {
-        this.professorId = professorId;
-    }
-
-    public Set<Long> getAssignedStudentIds() {
+    public List<Long> getAssignedStudentIds() {
         return assignedStudentIds;
     }
 
-    public int getCurrentStudentCount() {
-        return currentStudentCount;
+    public void setAssignedStudentIds(List<Long> assignedStudentIds) {
+        this.assignedStudentIds = assignedStudentIds;
+    }
+
+    public void addStudent(Long studentId) {
+        if (!assignedStudentIds.contains(studentId)) {
+            assignedStudentIds.add(studentId);
+        }
+    }
+
+    public void removeStudent(Long studentId) {
+        assignedStudentIds.remove(studentId);
+    }
+
+    // --- UI helper accessors ---
+
+    public String getProjectTitle() {
+        return projectTitle;
+    }
+
+    public void setProjectTitle(String projectTitle) {
+        this.projectTitle = projectTitle;
+    }
+
+    public String getProfessorName() {
+        return professorName;
+    }
+
+    public void setProfessorName(String professorName) {
+        this.professorName = professorName;
     }
 }
